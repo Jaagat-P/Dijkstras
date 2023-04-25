@@ -1,0 +1,64 @@
+import heapq
+
+class Node:
+def init(self, location, distance):
+self.location = location
+self.distance = distance
+
+def getLocation(self):
+    return self.location
+
+def getDistance(self):
+    return self.distance
+
+def setDistance(self, distance):
+    self.distance = distance
+
+
+def dijkstras(edges, vertices, start, end):
+global gr
+numVertices = len(vertices)
+gr = [[None] * numVertices for _ in range(numVertices)]
+
+# Build graph
+vertexIndices = {vertex:i for i, vertex in enumerate(vertices)}
+
+for edge in edges:
+    edgeStart = edge[0]
+    edgeEnd = edge[1]
+    weight = int(edge[2:])
+
+    startIndex = vertexIndices[edgeStart]
+    endIndex = vertexIndices[edgeEnd]
+
+    if not gr[startIndex][endIndex] or weight < gr[startIndex][endIndex].getDistance():
+        gr[startIndex][endIndex] = Node(edgeEnd, weight)
+
+# Dijkstra's algorithm
+startIx = vertexIndices[start]
+endIx = vertexIndices[end]
+
+distances = [2000] * numVertices
+distances[startIx] = 0
+
+pq = []
+heapq.heappush(pq, Node(start, 0))
+
+while pq:
+    currentNode = heapq.heappop(pq)
+    cI = vertexIndices[currentNode.getLocation()]
+
+    if cI == endIx:
+        return currentNode.getDistance()
+
+    for i in range(numVertices):
+        neighbor = gr[cI][i]
+        if neighbor:
+            newDistance = distances[cI] + neighbor.getDistance()
+
+            if newDistance < distances[i]:
+                distances[i] = newDistance
+                neighbor.setDistance(newDistance)
+                heapq.heappush(pq, neighbor)
+
+return -1
